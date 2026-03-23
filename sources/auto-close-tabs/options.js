@@ -61,6 +61,11 @@ async function onLoad() {
     console.error(e);
   }
 
+  // Show "Close active tabs" only in Firefox (getBrowserInfo is Firefox-only)
+  if (typeof browser.runtime.getBrowserInfo === "function") {
+    document.getElementById("closeActiveLabel").hidden = false;
+  }
+
   [
     "closeThreshold",
     "saveFolder",
