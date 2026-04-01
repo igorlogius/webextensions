@@ -61,9 +61,17 @@ async function onLoad() {
     console.error(e);
   }
 
+  // Show "Close active tabs" only in Firefox (getBrowserInfo is Firefox-only)
+  if (typeof browser.runtime.getBrowserInfo === "function") {
+    document.getElementById("closeActiveLabel").hidden = false;
+  }
+
   [
     "closeThreshold",
     "saveFolder",
+    "closeActive",
+    "closeAudible",
+    "closePinned",
     "intervalrules_url_regex",
     "intervalrules_time_ms_and_container_regex",
     "ignorerules_url_regex",
@@ -90,6 +98,9 @@ async function onLoad() {
     [
       "closeThreshold",
       "saveFolder",
+      "closeActive",
+      "closeAudible",
+      "closePinned",
       "intervalrules_url_regex",
       "intervalrules_time_ms_and_container_regex",
       "ignorerules_url_regex",

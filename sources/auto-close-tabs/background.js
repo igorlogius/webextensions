@@ -5,6 +5,14 @@ let saveFolder = "unfiled_____";
 let setIntervalIds = [];
 let autostart = false;
 let ignoreRules = [];
+let closeActive = false;
+let closeAudible = false;
+let closePinned = false;
+
+// Track when each tab was last activated (switched to) ourselves,
+// because Firefox updates tab.lastAccessed on user interactions too,
+// which prevents active tabs from ever appearing idle.
+const tabActivatedAt = new Map();
 
 const asyncFilter = async (arr, predicate) => {
   const results = await Promise.all(arr.map(predicate));
@@ -135,19 +143,23 @@ async function tabCleanUp(input) {
   // to check idle time
   const epoch_now = new Date().getTime();
 
+  const query = {
+    // care only about normal windows
+    windowType: "normal",
+  };
+  if (!closeActive) {
+    query.active = false;
+  }
+  if (!closeAudible) {
+    query.audible = false;
+  }
+  if (!closePinned) {
+    query.pinned = false;
+  }
+
   let all_tabs = (
     await asyncFilter(
-      await browser.tabs.query({
-        // we dont want to suprise users and active tabs have no usable
-        // lastAccessed time anyways
-        active: false,
-        // ignore audible
-        audible: false,
-        // ignore pinned
-        pinned: false,
-        // care only about normal windows
-        windowType: "normal",
-      }),
+      await browser.tabs.query(query),
       async (t) => {
         // filter ignored tabs
         const cn = await getContainerNameFromCookieStoreId(t.cookieStoreId);
@@ -218,7 +230,13 @@ async function tabCleanUp(input) {
     }
 
     // check the idle aka. last accessed time of the tab
-    const delta = epoch_now - t.lastAccessed;
+    // For active tabs, use our own tracked activation time since Firefox
+    // updates lastAccessed on in-tab interactions (mouse, keyboard, scroll),
+    // which would prevent active tabs from ever appearing idle.
+    const lastActive = t.active
+      ? (tabActivatedAt.get(t.id) || t.lastAccessed)
+      : t.lastAccessed;
+    const delta = epoch_now - lastActive;
     if (delta < input.minIdleTimeMilliSecs) {
       continue;
     }
@@ -253,6 +271,9 @@ async function onStorageChanged() {
     "closeThreshold",
     closeThreshold,
   );
+  closeActive = await getFromStorage("boolean", "closeActive", false);
+  closeAudible = await getFromStorage("boolean", "closeAudible", false);
+  closePinned = await getFromStorage("boolean", "closePinned", false);
 
   if (autostart) {
     updateBadge("on", "green");
@@ -281,6 +302,23 @@ async function onStorageChanged() {
 }
 
 (async () => {
+  // Seed activation times for all existing tabs
+  const existingTabs = await browser.tabs.query({});
+  for (const t of existingTabs) {
+    tabActivatedAt.set(t.id, t.lastAccessed);
+  }
+
+  // Track tab activations ourselves
+  browser.tabs.onActivated.addListener(({ tabId }) => {
+    tabActivatedAt.set(tabId, Date.now());
+  });
+  browser.tabs.onRemoved.addListener((tabId) => {
+    tabActivatedAt.delete(tabId);
+  });
+  browser.tabs.onCreated.addListener((tab) => {
+    tabActivatedAt.set(tab.id, Date.now());
+  });
+
   await onStorageChanged();
   browser.browserAction.onClicked.addListener(onBAClicked);
   browser.runtime.onMessage.addListener((data, sender) => {
