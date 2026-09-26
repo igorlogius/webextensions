@@ -1,14 +1,13 @@
 /* global browser */
 
-// cookieStoreIds of all managed containers
 let containerCleanupTimer = null;
 let toolbarAction = "";
-let tcdeldelay = 5000;
-let regexList = null;
-let ignoredRegexList = null;
+let tcdeldelay = 5000; // ms, configurable via options (stored as seconds)
 let emojis = [];
 let emojisoffset = 0;
 let usecolor = "turquoise";
+
+const FALLBACK_EMOJIS = ["🌀", "🌟", "🚀", "🎲", "🦄"];
 
 async function getFromStorage(type, id, fallback) {
   let tmp = await browser.storage.local.get(id);
@@ -104,7 +103,7 @@ async function onTabRemoved() {
     const containerWithTabs = new Set(
       (await browser.tabs.query({})).map((t) => t.cookieStoreId),
     );
-    containers = await browser.contextualIdentities.query({});
+    const containers = await browser.contextualIdentities.query({});
     containers.forEach((c) => {
       if (
         !containerWithTabs.has(c.cookieStoreId) &&
@@ -117,7 +116,7 @@ async function onTabRemoved() {
 }
 
 async function createTempContainerTab(url, activ = true) {
-  let container = await createContainer({});
+  let container = await createContainer();
   let tabs = await browser.tabs.query({ currentWindow: true, active: true });
   const index = tabs.length > 0 ? tabs[0].index + 1 : -1;
 
@@ -156,23 +155,23 @@ function onBAClicked(tab) {
 
 async function createContainer() {
   const now = "" + Date.now();
+  const pick =
+    emojis.length > 0
+      ? emojis[emojisoffset++ % emojis.length]
+      : FALLBACK_EMOJIS[emojisoffset++ % FALLBACK_EMOJIS.length];
   let container = await browser.contextualIdentities.create({
-    name:
-      "Temp" +
-      emojis[emojisoffset++ % (emojis.length - 1)] +
-      now.split("").reverse().join(""),
+    name: "Temp" + pick + now.split("").reverse().join(""),
     color: usecolor,
     icon: "circle",
   });
-  /*await browser.contextualIdentities.update(container.cookieStoreId, {
-    name: "Temp" + Date.now(),
-  });*/
   return container;
 }
 
 async function onStorageChange() {
   toolbarAction = await getFromStorage("string", "toolbarAction", "reopen");
   usecolor = await getFromStorage("string", "usecolors", "turquoise");
+  const delaySec = await getFromStorage("number", "tcdeldelaysec", 5);
+  tcdeldelay = delaySec * 1000;
 }
 
 async function onCommand(command) {
@@ -199,8 +198,24 @@ async function onCommand(command) {
   // init vars
   await onStorageChange();
 
-  let tmp = await fetch("emojis.json");
-  emojis = await tmp.json();
+  try {
+    let tmp = await fetch("emojis.json");
+    if (!tmp.ok) {
+      throw new Error("emojis.json fetch failed: " + tmp.status);
+    }
+    const loaded = await tmp.json();
+    if (Array.isArray(loaded) && loaded.length > 0) {
+      emojis = loaded;
+    } else {
+      throw new Error("emojis.json was empty or malformed");
+    }
+  } catch (e) {
+    console.error(
+      "Open Temp Container: falling back to built-in emoji set –",
+      e,
+    );
+    emojis = FALLBACK_EMOJIS.slice();
+  }
   emojis = emojis
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)

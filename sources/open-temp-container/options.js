@@ -51,3 +51,24 @@ async function setToStorage(id, value) {
     })
     .catch(console.error);
 });
+
+/* cleanup delay (seconds) */
+(() => {
+  const el = document.getElementById("tcdeldelaysec");
+
+  browser.storage.local
+    .get("tcdeldelaysec")
+    .then((obj) => {
+      el.value = typeof obj.tcdeldelaysec === "number" ? obj.tcdeldelaysec : 5;
+    })
+    .catch(console.error);
+
+  el.addEventListener("change", () => {
+    let val = parseInt(el.value, 10);
+    if (!Number.isFinite(val) || val < 1) {
+      val = 5;
+    }
+    el.value = val;
+    setToStorage("tcdeldelaysec", val);
+  });
+})();

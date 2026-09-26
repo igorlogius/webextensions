@@ -15,15 +15,26 @@
   },
   "commands": {
     "openinsame": {
-      "description": "Open TC with active URL"
+      "description": "Open TC with active URL",
+      "suggested_key": {
+        "default": "Ctrl+Shift+U"
+      }
     },
     "opennewtab": {
-      "description": "Open TC with about:newtab"
+      "description": "Open TC with about:newtab",
+      "suggested_key": {
+        "default": "Ctrl+Shift+I"
+      }
     }
   },
   "description": "Open bookmarks, links or tabs in temporary containers",
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/open-temp-container",
   "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "96": "icon-96.png",
+    "128": "icon-128.png",
     "512": "icon.png"
   },
   "manifest_version": 2,
@@ -39,5 +50,5 @@
     "tabs",
     "bookmarks"
   ],
-  "version": "1.3.54"
+  "version": "1.4.0"
 }

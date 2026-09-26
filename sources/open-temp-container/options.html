@@ -1,83 +1,376 @@
 <!doctype html>
-<head>
-  <meta charset="utf-8" />
-  <title>Options</title>
-  <style>
-    body {
-      background-color: lightgrey;
-      padding: 5px;
-      min-height: 640px;
-      font-family: monospace;
-      font-size: 1em;
-    }
-    fieldset {
-      padding: 10px;
-      margin: 5px;
-      border: 1px groove black;
-    }
-  </style>
-</head>
-<body>
-  <fieldset>
-    <legend>
-      <b
-        >Toolbar Button action opens a
-        <abbr title="Temporary Container">TC</abbr> with
-      </b>
-    </legend>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Open Temp Container — Options</title>
+    <style>
+      :root {
+        --bg-page: #f6f7f9;
+        --bg-panel: #ffffff;
+        --bg-titlebar: #eef0f3;
+        --border: #dde2e7;
+        --border-strong: #c4cbd2;
+        --ink: #1b1f24;
+        --muted: #8a93a0;
+        --key: #2b6cb0;
+        --accent: #0f9b8e;
+        --accent-ink: #ffffff;
+        --focus-ring: #0f9b8e;
+        font-size: 15px;
+      }
 
-    <input type="radio" value="reopen" name="toolbarAction" />
-    active Tab URL <i>(default)</i>
-    <br />
-    <input type="radio" value="newtab" name="toolbarAction" />
-    about:newtab
-  </fieldset>
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-page: #16191d;
+          --bg-panel: #1d2126;
+          --bg-titlebar: #22262c;
+          --border: #2c3138;
+          --border-strong: #3a4048;
+          --ink: #e7e9ec;
+          --muted: #838c98;
+          --key: #6ca9e0;
+          --accent: #29c4b3;
+          --accent-ink: #0b1211;
+          --focus-ring: #29c4b3;
+        }
+      }
 
-  <fieldset>
-    <legend>
-      <b>Change TC Color</b>
-    </legend>
+      * {
+        box-sizing: border-box;
+      }
 
-    <span style="background-color: turquoise"
-      ><input type="radio" name="usecolors" value="turquoise" />
-      turquoise_</span
-    >
-    <br />
+      body {
+        margin: 0;
+        min-height: 480px;
+        background: var(--bg-page);
+        color: var(--ink);
+        font-family:
+          ui-monospace, "JetBrains Mono", "Fira Code", SFMono-Regular, Menlo,
+          Consolas, "Liberation Mono", monospace;
+        line-height: 1.5;
+      }
 
-    <span style="background-color: blue; color: white"
-      ><input type="radio" name="usecolors" value="blue" /> blue______
-    </span>
+      .app {
+        max-width: 640px;
+        margin: 28px auto;
+        padding: 0 16px;
+      }
 
-    <br />
-    <span style="background-color: green; color: white"
-      ><input type="radio" name="usecolors" value="green" /> green_____
-    </span>
+      .file {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+      }
 
-    <br />
-    <span style="background-color: yellow"
-      ><input type="radio" name="usecolors" value="yellow" /> yellow____
-    </span>
-    <br />
+      .titlebar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: var(--bg-titlebar);
+        border-bottom: 1px solid var(--border);
+      }
 
-    <span style="background-color: orange">
-      <input type="radio" name="usecolors" value="orange" /> orange____
-    </span>
+      .titlebar-icon {
+        font-size: 1.1em;
+        color: var(--accent);
+      }
 
-    <br />
-    <span style="background-color: red; color: white">
-      <input type="radio" name="usecolors" value="red" /> red_______
-    </span>
+      .titlebar-name {
+        font-weight: 600;
+        font-size: 0.95em;
+      }
 
-    <br />
-    <span style="background-color: pink">
-      <input type="radio" name="usecolors" value="pink" /> pink______
-    </span>
+      .titlebar-path {
+        color: var(--muted);
+        font-size: 0.85em;
+        margin-left: auto;
+      }
 
-    <br />
-    <span style="background-color: purple; color: white">
-      <input type="radio" name="usecolors" value="purple" /> purple____</span
-    >
-  </fieldset>
+      .config {
+        padding: 4px 20px 20px;
+      }
 
-  <script src="options.js"></script>
-</body>
+      .brace {
+        color: var(--muted);
+        padding: 10px 0 2px;
+      }
+
+      .setting {
+        position: relative;
+        padding: 14px 0 14px 18px;
+        border-left: 2px solid var(--border);
+        margin-left: 4px;
+      }
+
+      .setting + .setting {
+        border-top: none;
+      }
+
+      .comment {
+        color: var(--muted);
+        font-style: italic;
+        font-size: 0.88em;
+        margin-bottom: 6px;
+      }
+
+      .key {
+        color: var(--key);
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .key::after {
+        content: ":";
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      /* shared focus style for every interactive control */
+      input:focus-visible,
+      .choice:focus-within .choice-box,
+      .swatch:focus-within .swatch-dot {
+        outline: 2px solid var(--focus-ring);
+        outline-offset: 2px;
+      }
+
+      /* toolbar action: two selectable choices */
+      .choice-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .choice {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        width: fit-content;
+      }
+
+      .choice input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+      }
+
+      .choice-box {
+        width: 15px;
+        height: 15px;
+        flex: none;
+        border: 1.5px solid var(--border-strong);
+        border-radius: 50%;
+        background: var(--bg-panel);
+        position: relative;
+      }
+
+      .choice input:checked + .choice-box {
+        border-color: var(--accent);
+      }
+
+      .choice input:checked + .choice-box::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .choice-label em {
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      /* container color: swatch row */
+      .swatch-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px 18px;
+      }
+
+      .swatch {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        cursor: pointer;
+      }
+
+      .swatch input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+      }
+
+      .swatch-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--dot-color);
+        border: 1.5px solid transparent;
+        box-shadow: 0 0 0 1px var(--border-strong) inset;
+      }
+
+      .swatch input:checked + .swatch-dot {
+        box-shadow:
+          0 0 0 2px var(--bg-panel),
+          0 0 0 4px var(--dot-color);
+      }
+
+      .swatch-label {
+        font-size: 0.9em;
+        color: var(--ink);
+      }
+
+      /* cleanup delay: number field */
+      .number-field {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .number-field input[type="number"] {
+        width: 4.5em;
+        padding: 5px 8px;
+        font: inherit;
+        color: var(--ink);
+        background: var(--bg-page);
+        border: 1.5px solid var(--border-strong);
+        border-radius: 4px;
+      }
+
+      .number-field .unit {
+        color: var(--muted);
+        font-size: 0.9em;
+      }
+
+      .foot {
+        padding: 12px 20px 18px;
+        color: var(--muted);
+        font-size: 0.82em;
+        border-top: 1px solid var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="file">
+        <div class="titlebar">
+          <span class="titlebar-icon" aria-hidden="true">⧉</span>
+          <span class="titlebar-name">Open Temp Container</span>
+          <span class="titlebar-path">options.json</span>
+        </div>
+
+        <div class="config">
+          <div class="brace">{</div>
+
+          <div class="setting">
+            <div class="comment">// what the toolbar button opens</div>
+            <div class="key">"toolbarAction"</div>
+            <div
+              class="choice-group"
+              role="radiogroup"
+              aria-label="Toolbar button action"
+            >
+              <label class="choice">
+                <input type="radio" value="reopen" name="toolbarAction" />
+                <span class="choice-box" aria-hidden="true"></span>
+                <span class="choice-label"
+                  >active tab URL <em>(default)</em></span
+                >
+              </label>
+              <label class="choice">
+                <input type="radio" value="newtab" name="toolbarAction" />
+                <span class="choice-box" aria-hidden="true"></span>
+                <span class="choice-label">about:newtab</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting">
+            <div class="comment">
+              // color assigned to every new temp container
+            </div>
+            <div class="key">"usecolors"</div>
+            <div
+              class="swatch-group"
+              role="radiogroup"
+              aria-label="Temp container color"
+            >
+              <label class="swatch" style="--dot-color: #00c79a">
+                <input type="radio" name="usecolors" value="turquoise" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">turquoise</span>
+              </label>
+              <label class="swatch" style="--dot-color: #37adff">
+                <input type="radio" name="usecolors" value="blue" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">blue</span>
+              </label>
+              <label class="swatch" style="--dot-color: #51cd00">
+                <input type="radio" name="usecolors" value="green" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">green</span>
+              </label>
+              <label class="swatch" style="--dot-color: #ffcb00">
+                <input type="radio" name="usecolors" value="yellow" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">yellow</span>
+              </label>
+              <label class="swatch" style="--dot-color: #ff9f00">
+                <input type="radio" name="usecolors" value="orange" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">orange</span>
+              </label>
+              <label class="swatch" style="--dot-color: #ff613d">
+                <input type="radio" name="usecolors" value="red" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">red</span>
+              </label>
+              <label class="swatch" style="--dot-color: #ff4bda">
+                <input type="radio" name="usecolors" value="pink" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">pink</span>
+              </label>
+              <label class="swatch" style="--dot-color: #af51f5">
+                <input type="radio" name="usecolors" value="purple" />
+                <span class="swatch-dot" aria-hidden="true"></span>
+                <span class="swatch-label">purple</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting">
+            <div class="comment">
+              // how long an empty temp container is kept before removal
+            </div>
+            <div class="key">"tcdeldelaysec"</div>
+            <div class="number-field">
+              <input
+                type="number"
+                id="tcdeldelaysec"
+                min="1"
+                max="600"
+                step="1"
+                aria-label="Cleanup delay in seconds"
+              />
+              <span class="unit">seconds</span>
+            </div>
+          </div>
+
+          <div class="brace">}</div>
+        </div>
+
+        <div class="foot">
+          Changes are saved immediately — no need to reload.
+        </div>
+      </div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
