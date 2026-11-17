@@ -65,6 +65,19 @@ const escapeHtml = (str) =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 
+// 999 -> "999", 12345 -> "12k", 123456 -> "1hk", 1234567 -> "1m"
+const shortTextForNumber = (number) => {
+  if (number < 1000) {
+    return number.toString();
+  } else if (number < 100000) {
+    return Math.floor(number / 1000).toString() + "k";
+  } else if (number < 1000000) {
+    return Math.floor(number / 100000).toString() + "hk";
+  } else {
+    return Math.floor(number / 1000000).toString() + "m";
+  }
+};
+
 const NOTIFY_DEFAULTS = { iconUrl: "icon-96.png", msToClose: 3500 };
 
 // no-op when the optional "notifications" permission has not been granted
@@ -100,4 +113,5 @@ export {
   isLoadedTemporary,
   escapeHtml,
   notify,
+  shortTextForNumber,
 };

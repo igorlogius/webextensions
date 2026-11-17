@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome</title>
+    <link rel="stylesheet" href="theme.css" />
+    <style>
+      body {
+        max-width: 640px;
+        margin: 32px auto;
+        padding: 0 16px;
+        font-size: 14px;
+      }
+      .masthead img {
+        width: 56px;
+        height: 56px;
+      }
+      .masthead h1 {
+        font-size: 1.6em;
+      }
+      .actions {
+        margin-top: 12px;
+      }
+      .actions a,
+      .actions button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        color: var(--text);
+        font: inherit;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .actions a:hover,
+      .actions button:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .actions .primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-text);
+      }
+      .actions .primary:hover {
+        background: var(--accent-hover);
+        color: var(--accent-text);
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <img id="icon" alt="" hidden />
+      <div>
+        <h1 id="title"></h1>
+        <p id="subtitle"></p>
+      </div>
+    </header>
+
+    <section class="card">
+      <p id="description"></p>
+      <p id="tip" hidden></p>
+      <div class="actions toolbar">
+        <button id="settings" class="primary" type="button" hidden>
+          Open settings
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Help &amp; feedback</h2>
+      <p>
+        Something not working, unclear or missing? Every addon of this
+        collection is developed in the open, and feedback is welcome.
+      </p>
+      <div class="actions toolbar" id="links"></div>
+    </section>
+
+    <script type="module" src="welcome.js"></script>
+  </body>
+</html>
