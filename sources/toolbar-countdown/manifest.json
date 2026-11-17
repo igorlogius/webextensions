@@ -1,9 +1,19 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
   "author": "igorlogius",
+  "browser_specific_settings": {
+    "gecko": {
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/toolbar-countdown",
   "description": "Adds toolbar button, that functions as a single custom countdown timer that shows the most significant part (days,hours,minutes or seconds) of the remaining custom countdown",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "browser_action": {
     "default_area": "navbar",

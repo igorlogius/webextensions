@@ -2,6 +2,7 @@
 
 (async () => {
   let storage = await import("./storage.js");
+  const utils = await import("./utils.js");
 
   //const temporary = browser.runtime.id.endsWith('@temporary-addon'); // debugging?
   const manifest = browser.runtime.getManifest();
@@ -51,18 +52,6 @@
       enddate = -1;
     }
     enddatename = await storage.get("string", "name", "");
-  }
-
-  function shortTextForNumber(number) {
-    if (number < 1000) {
-      return number.toString();
-    } else if (number < 100000) {
-      return Math.floor(number / 1000).toString() + "k";
-    } else if (number < 1000000) {
-      return Math.floor(number / 100000).toString() + "hk";
-    } else {
-      return Math.floor(number / 1000000).toString() + "m";
-    }
   }
 
   function updateBadge() {
@@ -142,7 +131,7 @@
       ctx.fillText(text, centerX, centerY, maxWidth);
     };
     const textOffset = 2; // trying to align text beautifully here
-    const text = rank !== null ? shortTextForNumber(rank) : "n/a";
+    const text = rank !== null ? utils.shortTextForNumber(rank) : "n/a";
     addText(ctx, text, imageWidth / 2, imageHeight / 2 + textOffset);
     return ctx.getImageData(0, 0, imageWidth, imageHeight);
   }
