@@ -259,11 +259,6 @@ async function refreshPreview(rec, tabId, frameId, eid) {
   }
 }
 
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
-
 function sendToFrame(tabId, frameId, msg) {
   const opts = typeof frameId === "number" ? { frameId } : undefined;
   return browser.tabs.sendMessage(tabId, msg, opts);
@@ -811,8 +806,9 @@ async function fitWindowToContent() {
 }
 
 (async () => {
+  const storage = await import("./storage.js");
   // same theme the popup uses, from the same stored stylesheet
-  let cssText = await getFromStorage("string", "styles", null);
+  let cssText = await storage.get("string", "styles", null);
   if (!cssText) {
     const resp = await fetch(browser.runtime.getURL("default.css"));
     cssText = await resp.text();

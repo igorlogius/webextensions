@@ -241,11 +241,6 @@ function formatTimeLabel(value, duration) {
   return formatTime(value) + " / " + formatTime(duration);
 }
 
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
-
 // ---- preview frames ----
 // posters arrive as JPEG Blobs; show one via an object URL and revoke the
 // previous one so frames don't pile up in memory (one new URL per poll)
@@ -1399,9 +1394,10 @@ function renderSiteDetail(origin) {
 }
 
 (async () => {
+  const storage = await import("./storage.js");
   // default.css is the single source of truth for the default look;
   // a user-edited stylesheet in storage (set via the options page) overrides it.
-  let cssText = await getFromStorage("string", "styles", null);
+  let cssText = await storage.get("string", "styles", null);
   if (!cssText) {
     const resp = await fetch(browser.runtime.getURL("default.css"));
     cssText = await resp.text();
