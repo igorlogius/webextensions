@@ -1,8 +1,12 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
   "author": "igorlogius",
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/startup-bookmarks",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"],
+    "type": "module"
   },
   "description": "Open a set of bookmarks on browser startup",
   "icons": {

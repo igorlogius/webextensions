@@ -1,12 +1,9 @@
 /* global browser */
 
+import * as storage from "./storage.js";
+
 const manifest = browser.runtime.getManifest();
 const extname = manifest.name;
-
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
 
 async function getURLsFromBMFolder(bmId) {
   return new Set(
@@ -49,7 +46,7 @@ async function openURLsInWindow(winId, urls) {
 
 async function openStartupBookmarks() {
   let tmp;
-  const bmId = await getFromStorage("string", "folder", "");
+  const bmId = await storage.get("string", "folder", "");
   if (bmId === "") {
     return;
   }

@@ -1,12 +1,10 @@
 /* global browser */
 
+import * as storage from "./storage.js";
+import { recGetFolders } from "./bookmarks.js";
+
 const folders = document.getElementById("folder");
 const testbtn = document.getElementById("test");
-
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
 
 function onChange(evt) {
   let id = evt.target.id;
@@ -55,21 +53,6 @@ function onChange(evt) {
   el.addEventListener("input", onChange);
 });
 
-function recGetFolders(node, depth = 0) {
-  let out = new Map();
-  if (typeof node.url !== "string") {
-    if (node.id !== "root________") {
-      out.set(node.id, { depth: depth, title: node.title });
-    }
-    if (node.children) {
-      for (let child of node.children) {
-        out = new Map([...out, ...recGetFolders(child, depth + 1)]);
-      }
-    }
-  }
-  return out;
-}
-
 async function initSelect() {
   const nodes = await browser.bookmarks.getTree();
   let out = new Map();
@@ -77,7 +60,7 @@ async function initSelect() {
   for (const node of nodes) {
     out = new Map([...out, ...recGetFolders(node, depth)]);
   }
-  let tmp = await getFromStorage("string", "folder", "");
+  let tmp = await storage.get("string", "folder", "");
   let last_val = "";
   for (const [k, v] of out) {
     folders.add(new Option("-".repeat(v.depth) + " " + v.title, k));
