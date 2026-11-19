@@ -9,7 +9,7 @@
   },
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/show-qrcode",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "commands": {
     "_execute_browser_action": {}

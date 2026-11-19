@@ -1,5 +1,7 @@
 /* global browser QRCode */
 
+import * as storage from "./storage.js";
+
 const qrtype = document.getElementById("qrtype");
 const qrtext = document.getElementById("qrtext");
 const qrimg = document.getElementById("qrimg");
@@ -59,11 +61,6 @@ function setSvgContent(container, svgString) {
   if (svgEl && svgEl.nodeName.toLowerCase() === "svg") {
     container.appendChild(svgEl);
   }
-}
-
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
 }
 
 function escapeWifiField(value) {
@@ -137,14 +134,14 @@ async function updateQRCode() {
     return;
   }
 
-  const fgcolorBase = await getFromStorage("string", "fgcolor", "#000000");
-  const fgalpha = parseInt(await getFromStorage("string", "fgalpha", "255"));
-  const bgcolorBase = await getFromStorage("string", "bgcolor", "#ffffff");
-  const bgalpha = parseInt(await getFromStorage("string", "bgalpha", "255"));
-  const qrSize = await getFromStorage("number", "qrSize", 460);
-  const qrPadding = await getFromStorage("number", "qrPadding", 1);
-  const qrecl = await getFromStorage("string", "qrecl", "M");
-  const mode = await getFromStorage("string", "saveMode", "png");
+  const fgcolorBase = await storage.get("string", "fgcolor", "#000000");
+  const fgalpha = parseInt(await storage.get("string", "fgalpha", "255"));
+  const bgcolorBase = await storage.get("string", "bgcolor", "#ffffff");
+  const bgalpha = parseInt(await storage.get("string", "bgalpha", "255"));
+  const qrSize = await storage.get("number", "qrSize", 460);
+  const qrPadding = await storage.get("number", "qrPadding", 1);
+  const qrecl = await storage.get("string", "qrecl", "M");
+  const mode = await storage.get("string", "saveMode", "png");
 
   let fgcolor = fgcolorBase + fgalpha.toString(16);
   let bgcolor = bgcolorBase + bgalpha.toString(16);
@@ -265,7 +262,7 @@ function setupColorPicker(hexInputId, swatchId) {
   // settings.js also loads this field's stored value, but does so
   // asynchronously — read it ourselves too so the swatch preview is
   // correct immediately rather than racing that load.
-  getFromStorage("string", hexInputId, hexInput.value).then((stored) => {
+  storage.get("string", hexInputId, hexInput.value).then((stored) => {
     if (HEX_COLOR_RE.test(stored)) {
       hexInput.value = stored;
     }
@@ -413,12 +410,12 @@ const BOARD_KEY = "qrBoard";
 // with the current quick-settings and pushes a new board entry unless
 // an identical one (same content + render settings) already exists.
 async function pushToBoard(board, content) {
-  const fgcolorBase = await getFromStorage("string", "fgcolor", "#000000");
-  const fgalpha = parseInt(await getFromStorage("string", "fgalpha", "255"));
-  const bgcolorBase = await getFromStorage("string", "bgcolor", "#ffffff");
-  const bgalpha = parseInt(await getFromStorage("string", "bgalpha", "255"));
-  const qrPadding = await getFromStorage("number", "qrPadding", 1);
-  const qrecl = await getFromStorage("string", "qrecl", "M");
+  const fgcolorBase = await storage.get("string", "fgcolor", "#000000");
+  const fgalpha = parseInt(await storage.get("string", "fgalpha", "255"));
+  const bgcolorBase = await storage.get("string", "bgcolor", "#ffffff");
+  const bgalpha = parseInt(await storage.get("string", "bgalpha", "255"));
+  const qrPadding = await storage.get("number", "qrPadding", 1);
+  const qrecl = await storage.get("string", "qrecl", "M");
 
   let fg = fgcolorBase + fgalpha.toString(16);
   let bg = bgcolorBase + bgalpha.toString(16);
@@ -532,7 +529,7 @@ async function updateMultiTabBar() {
 document.getElementById("qrsave").addEventListener(
   "click",
   async function () {
-    const mode = await getFromStorage("string", "saveMode", "png");
+    const mode = await storage.get("string", "saveMode", "png");
     let a = document.createElement("a");
     a.download = qrimg.filename;
 
@@ -599,7 +596,7 @@ document.getElementById("qrcopy").addEventListener(
 async function onLoad() {
   updateMultiTabBar();
 
-  const lastType = await getFromStorage("string", "qrLastType", "");
+  const lastType = await storage.get("string", "qrLastType", "");
   if (lastType !== "") {
     qrtype.value = lastType;
   }
