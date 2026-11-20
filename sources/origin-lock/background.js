@@ -1,6 +1,7 @@
 /* global browser */
 
 (async () => {
+  const storage = await import("./storage.js");
   let list;
   let mode;
 
@@ -9,11 +10,6 @@
   //const temporary = browser.runtime.id.endsWith('@temporary-addon'); // debugging?
   const manifest = browser.runtime.getManifest();
   const extname = manifest.name;
-
-  async function getFromStorage(type, id, fallback) {
-    let tmp = await browser.storage.local.get(id);
-    return typeof tmp[id] === type ? tmp[id] : fallback;
-  }
 
   async function onBeforeRequest(details) {
     const tab = await browser.tabs.get(details.tabId);
@@ -94,7 +90,7 @@
       }
     }
     if (changedItems.includes("list")) {
-      list = new Set(await getFromStorage("object", "list", []));
+      list = new Set(await storage.get("object", "list", []));
     }
   }
 
@@ -159,8 +155,8 @@
   }
 
   // init
-  list = new Set(await getFromStorage("object", "list", []));
-  mode = await getFromStorage("boolean", "mode", true); // false := whitelist
+  list = new Set(await storage.get("object", "list", []));
+  mode = await storage.get("boolean", "mode", true); // false := whitelist
 
   if (mode) {
     // blacklist

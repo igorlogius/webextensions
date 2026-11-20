@@ -1,5 +1,8 @@
 /* global browser */
 
+import * as storage from "./storage.js";
+import { recGetFolders } from "./bookmarks.js";
+
 const manifest = browser.runtime.getManifest();
 const extname = manifest.name;
 
@@ -16,26 +19,6 @@ function notify(title, message = "", iconUrl = "icon.png") {
       message,
     });
   }
-}
-
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
-
-function recGetFolders(node, depth = 0) {
-  let out = new Map();
-  if (typeof node.url !== "string") {
-    if (node.id !== "root________") {
-      out.set(node.id, { depth: depth, title: node.title });
-    }
-    if (node.children) {
-      for (let child of node.children) {
-        out = new Map([...out, ...recGetFolders(child, depth + 1)]);
-      }
-    }
-  }
-  return out;
 }
 
 async function updateBookmarkFoldersCache() {
@@ -162,7 +145,7 @@ async function onStorageChanged(changes, area) {
     area === "local" &&
     Object.prototype.hasOwnProperty.call(changes, "notifications")
   ) {
-    notifications = await getFromStorage("boolean", "notifications", true);
+    notifications = await storage.get("boolean", "notifications", true);
   }
 }
 
@@ -181,7 +164,7 @@ browser.bookmarks.onCreated.addListener(onBookmarkCreated);
 browser.storage.onChanged.addListener(onStorageChanged);
 
 (async () => {
-  notifications = await getFromStorage("boolean", "notifications", true);
+  notifications = await storage.get("boolean", "notifications", true);
   // populate the cache immediately rather than waiting for onStartup/onInstalled,
   // so the options page always has folders to show
   await updateBookmarkFoldersCache();

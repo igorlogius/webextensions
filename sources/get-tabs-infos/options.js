@@ -1,4 +1,7 @@
-/* global browser, getFromStorage, setToStorage, getDocElById */
+/* global browser */
+
+import * as storage from "./storage.js";
+import { getDocElById } from "./helper.js";
 
 const ROW_COUNT = 12; // must match the number of "commands" in manifest.json
 
@@ -45,16 +48,16 @@ async function saveConfig() {
     ).map((s) => s.value);
     return { format, scope, action };
   });
-  await setToStorage("shortcutconfig", shortcutconfig);
+  await storage.set("shortcutconfig", shortcutconfig);
   flash("Saved");
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const formatStrings = await getFromStorage("object", "formatStrings", []);
+  const formatStrings = await storage.get("object", "formatStrings", []);
   const formatEntries = formatStrings
     .filter((f) => typeof f.name === "string")
     .map((f) => [f.name, f.name]);
-  const saved = await getFromStorage("object", "shortcutconfig", []);
+  const saved = await storage.get("object", "shortcutconfig", []);
 
   const tbody = getDocElById("rows");
   for (let i = 0; i < ROW_COUNT; i++) {

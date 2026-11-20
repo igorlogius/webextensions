@@ -454,7 +454,6 @@ async function handleInstalled(details) {
   } catch (e) {
     utils.log("error", "cannot load initial config: " + e);
   }
-  await browser.runtime.openOptionsPage();
 }
 
 const guard =

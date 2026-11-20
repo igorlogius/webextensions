@@ -1,9 +1,11 @@
 /* global browser */
 
-//const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+import * as storage from "./storage.js";
+import { getTabsInfos, copyToClipboardAsHTML, iconBlink } from "./tabsinfos.js";
+import { saveToFile } from "./helper.js";
 
 async function onCommand(cmd) {
-  const shortcutconfig = await getFromStorage("object", "shortcutconfig", null);
+  const shortcutconfig = await storage.get("object", "shortcutconfig", null);
 
   const cfg = shortcutconfig === null ? undefined : shortcutconfig[cmd];
 
@@ -35,11 +37,11 @@ async function onCommand(cmd) {
 async function onInstalled(details) {
   let tmp;
   if (details.reason === "install") {
-    tmp = await getFromStorage("object", "formatStrings", []);
+    tmp = await storage.get("object", "formatStrings", []);
     if (tmp.length < 1) {
       tmp = await fetch("formatStrings.json");
       tmp = await tmp.json();
-      await setToStorage("formatStrings", tmp);
+      await storage.set("formatStrings", tmp);
     }
   }
 }

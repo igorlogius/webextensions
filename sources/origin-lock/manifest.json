@@ -10,7 +10,7 @@
     }
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "icons": {
     "87": "icon.png"

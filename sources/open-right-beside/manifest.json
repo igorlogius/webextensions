@@ -1,4 +1,7 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
   "author": "igorlogius",
   "browser_specific_settings": {
     "gecko": {
@@ -11,7 +14,7 @@
   },
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/open-right-beside",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "icons": {
     "128": "icon.png"

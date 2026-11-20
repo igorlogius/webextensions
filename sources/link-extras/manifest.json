@@ -2,7 +2,7 @@
   "author": "igorlogius",
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/link-extras",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["install.js", "background.js"],
     "type": "module"
   },
   "browser_action": {

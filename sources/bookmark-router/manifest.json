@@ -6,7 +6,8 @@
     "default_area": "navbar"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"],
+    "type": "module"
   },
   "browser_specific_settings": {
     "gecko": {

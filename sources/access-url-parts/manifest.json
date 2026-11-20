@@ -1,4 +1,8 @@
 {
+  "background": {
+    "scripts": ["install.js"],
+    "persistent": false
+  },
   "author": "igorlogius",
   "browser_specific_settings": {
     "gecko": {

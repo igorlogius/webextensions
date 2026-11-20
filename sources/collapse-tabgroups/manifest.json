@@ -1,4 +1,7 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
   "author": "igorlogius",
   "browser_specific_settings": {
     "gecko": {
@@ -12,7 +15,7 @@
     "default_area": "navbar"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "commands": {
     "_execute_browser_action": {}

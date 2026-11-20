@@ -1,5 +1,7 @@
 /*global browser */
 
+import { shortTextForNumber } from "./utils.js";
+
 const browserStartTimestamp = Date.now();
 
 const filter = {
@@ -46,18 +48,6 @@ function getHexColorStringForNumber(number) {
     return "orange"; // orange
   } else {
     return "red"; // red
-  }
-}
-
-function shortTextForNumber(number) {
-  if (number < 1000) {
-    return number.toString();
-  } else if (number < 100000) {
-    return Math.floor(number / 1000).toString() + "k";
-  } else if (number < 1000000) {
-    return Math.floor(number / 100000).toString() + "hk";
-  } else {
-    return Math.floor(number / 1000000).toString() + "m";
   }
 }
 

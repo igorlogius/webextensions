@@ -1,8 +1,11 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
     "author": "igorlogius",
     "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/quick-image-print",
     "background": {
-        "scripts": [
+        "scripts": ["install.js", 
             "background.js"
         ]
     },

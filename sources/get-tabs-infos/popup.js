@@ -1,4 +1,8 @@
-/* global browser, getFromStorage, setToStorage, getDocElById, getTabsInfos, saveToFile, copyToClipboardAsHTML */
+/* global browser */
+
+import * as storage from "./storage.js";
+import { getTabsInfos, copyToClipboardAsHTML } from "./tabsinfos.js";
+import { getDocElById, saveToFile } from "./helper.js";
 
 const PLACEHOLDERS = [
   "%url",
@@ -41,7 +45,7 @@ function flash(msg) {
 }
 
 async function loadFormats(selected) {
-  const formats = await getFromStorage("object", "formatStrings", []);
+  const formats = await storage.get("object", "formatStrings", []);
   const sel = getDocElById("formatOptions");
   sel.length = 1; // keep the "Select a format" entry
   formats.forEach((f) => {
@@ -59,8 +63,8 @@ async function loadFormats(selected) {
 async function updateOutput() {
   const format = getDocElById("formatOptions").value;
   const scope = getScope();
-  await setToStorage("lastSelectedScope", scope);
-  await setToStorage("lastSelectedFormat", format);
+  await storage.set("lastSelectedScope", scope);
+  await storage.set("lastSelectedFormat", format);
 
   const out = getDocElById("output");
   if (format !== "") {
@@ -74,8 +78,8 @@ async function updateOutput() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadFormats(await getFromStorage("string", "lastSelectedFormat", ""));
-  setScope(await getFromStorage("string", "lastSelectedScope", "AllTabs"));
+  await loadFormats(await storage.get("string", "lastSelectedFormat", ""));
+  setScope(await storage.get("string", "lastSelectedScope", "AllTabs"));
   await updateOutput();
 
   // placeholder chips insert at the cursor of the "new format" field
@@ -126,9 +130,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (name === "") {
       return;
     }
-    const formats = await getFromStorage("object", "formatStrings", []);
+    const formats = await storage.get("object", "formatStrings", []);
     formats.unshift({ name });
-    await setToStorage("formatStrings", formats);
+    await storage.set("formatStrings", formats);
     await loadFormats(name);
     newEntry.value = "";
     getDocElById("addFormat").open = false;
@@ -162,9 +166,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     clearTimeout(armTimer);
     disarm();
-    let formats = await getFromStorage("object", "formatStrings", []);
+    let formats = await storage.get("object", "formatStrings", []);
     formats = formats.filter((f) => f.name !== selected);
-    await setToStorage("formatStrings", formats);
+    await storage.set("formatStrings", formats);
     await loadFormats("");
     await updateOutput();
     flash("Format deleted");

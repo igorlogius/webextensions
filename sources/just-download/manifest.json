@@ -1,7 +1,10 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
   "author": "igorlogius",
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/just-download",
-  "background": { "scripts": ["background.js"] },
+  "background": { "scripts": ["install.js", "background.js"] },
   "icons": { "256": "icon.png" },
   "manifest_version": 2,
   "name": "Just Download",

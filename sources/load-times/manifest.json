@@ -1,9 +1,13 @@
 {
+  "options_ui": {
+    "page": "welcome.html"
+  },
   "author": "igorlogius",
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/load-times",
   "browser_style": true,
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"],
+    "type": "module"
   },
   "browser_action": {
     "browser_style": true,
