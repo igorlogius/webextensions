@@ -1,5 +1,8 @@
 /* global browser, CM */
 
+import * as storage from "./storage.js";
+import { copyToClipboardAsHTML } from "./tabsinfos.js";
+
 const impbtnWrp = document.getElementById("impbtn_wrapper");
 const impbtn = document.getElementById("impbtn");
 
@@ -352,7 +355,7 @@ const SIDEBAR_MAX_WIDTH = 480;
 
 async function initSidebarResizer() {
   const resizer = document.getElementById("sidebarResizer");
-  const savedWidth = await getFromStorage("number", "sidebarWidth", null);
+  const savedWidth = await storage.get("number", "sidebarWidth", null);
   if (savedWidth !== null) {
     document.documentElement.style.setProperty(
       "--sidebar-w",
@@ -381,7 +384,7 @@ async function initSidebarResizer() {
       10,
     );
     if (!isNaN(finalWidth)) {
-      setToStorage("sidebarWidth", finalWidth);
+      storage.set("sidebarWidth", finalWidth);
     }
   }
 
@@ -401,7 +404,7 @@ async function initSidebarResizer() {
 
   resizer.addEventListener("dblclick", () => {
     document.documentElement.style.setProperty("--sidebar-w", "300px");
-    setToStorage("sidebarWidth", 300);
+    storage.set("sidebarWidth", 300);
   });
 }
 
@@ -629,11 +632,11 @@ async function saveConfig() {
     },
   );
 
-  setToStorage("shortcutconfig", shortcutconfig);
+  storage.set("shortcutconfig", shortcutconfig);
 }
 
 async function restoreConfig() {
-  const shortcutconfig = await getFromStorage("object", "shortcutconfig", []);
+  const shortcutconfig = await storage.get("object", "shortcutconfig", []);
 
   if (shortcutconfig.length > 0) {
     Array.from(document.querySelectorAll("#shortcutconfigs tbody tr")).forEach(
@@ -651,7 +654,7 @@ async function restoreConfig() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  let formatStrings = await getFromStorage("object", "selectors", []);
+  let formatStrings = await storage.get("object", "selectors", []);
 
   let formatlists = document.querySelectorAll('select[name="formatlist"]');
 

@@ -1,11 +1,14 @@
 /* global browser */
 
+import * as storage from "./storage.js";
+import { copyToClipboardAsHTML, iconBlink } from "./tabsinfos.js";
+import { getTabs, saveToFile, downloadAsFiles, openWindow } from "./helper.js";
+
 browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
     let tmp = await fetch(browser.runtime.getURL("settings.json"));
     tmp = await tmp.json();
     browser.storage.local.set({ selectors: tmp });
-    browser.runtime.openOptionsPage();
   }
   await updateMenus();
 });
@@ -163,13 +166,13 @@ browser.browserAction.setBadgeBackgroundColor({ color: "#00000000" });
 browser.storage.onChanged.addListener(updateMenus);
 
 async function onCommand(cmd) {
-  const shortcutconfig = await getFromStorage("object", "shortcutconfig", null);
+  const shortcutconfig = await storage.get("object", "shortcutconfig", null);
 
   if (shortcutconfig === null) {
     return;
   }
 
-  const selectors = await getFromStorage("object", "selectors", []);
+  const selectors = await storage.get("object", "selectors", []);
 
   let tmp;
   let out = [];

@@ -13,7 +13,8 @@
     "default_area": "navbar"
   },
   "background": {
-    "scripts": ["helper.js", "background.js"]
+    "scripts": ["install.js", "background.js"],
+    "type": "module"
   },
   "commands": {
     "0": {
