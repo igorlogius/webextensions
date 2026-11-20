@@ -1,15 +1,17 @@
 /* global browser */
 
+import * as storage from "./storage.js";
+
 (async () => {
   const excluded = new Set();
   let tid = null;
 
-  let maxactivtabs = await getFromStorage("number", "maxactivtabs", 3);
-  let includepins = await getFromStorage("boolean", "includepins", false);
+  let maxactivtabs = await storage.get("number", "maxactivtabs", 3);
+  let includepins = await storage.get("boolean", "includepins", false);
   let regexList = await getRegexList();
 
   async function getRegexList() {
-    let tmp = await getFromStorage("string", "listmatchers", "");
+    let tmp = await storage.get("string", "listmatchers", "");
 
     let l = [];
 
@@ -41,8 +43,8 @@
 
   async function onStorageChange(/*changes, area*/) {
     regexList = await getRegexList();
-    includepins = await getFromStorage("boolean", "includepins", false);
-    maxactivtabs = await getFromStorage("number", "maxactivtabs", 3);
+    includepins = await storage.get("boolean", "includepins", false);
+    maxactivtabs = await storage.get("number", "maxactivtabs", 3);
   }
 
   async function doUnload() {
