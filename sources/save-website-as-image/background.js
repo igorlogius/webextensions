@@ -464,7 +464,6 @@ browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
     // flag read by options.js to show the welcome message once
     await browser.storage.local.set({ showWelcome: true });
-    browser.runtime.openOptionsPage();
   }
 });
 
