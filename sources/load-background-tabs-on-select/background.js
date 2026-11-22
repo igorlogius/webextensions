@@ -1,15 +1,6 @@
 /* global browser */
 
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
-
-async function setToStorage(id, value) {
-  let obj = {};
-  obj[id] = value;
-  return browser.storage.local.set(obj);
-}
+import * as storage from "./storage.js";
 
 (async () => {
   const temporary = browser.runtime.id.endsWith("@temporary-addon"); // debugging?
@@ -20,12 +11,12 @@ async function setToStorage(id, value) {
   let regexList = [];
 
   async function getMode() {
-    return await getFromStorage("boolean", "mode", false);
+    return await storage.get("boolean", "mode", false);
   }
 
   async function getRegexList() {
     let out = [];
-    let tmp = await getFromStorage("string", "matchers", "");
+    let tmp = await storage.get("string", "matchers", "");
 
     tmp.split("\n").forEach((line) => {
       line = line.trim();
@@ -71,7 +62,7 @@ async function setToStorage(id, value) {
   }
 
   async function onStorageChange(/*changes, area*/) {
-    manually_disabled = await getFromStorage(
+    manually_disabled = await storage.get(
       "boolean",
       "manually_disabled",
       false,
@@ -130,24 +121,24 @@ async function setToStorage(id, value) {
   browser.browserAction.onClicked.addListener(() => {
     manually_disabled = !manually_disabled;
     updateBadge();
-    setToStorage("manually_disabled", manually_disabled);
+    storage.set("manually_disabled", manually_disabled);
   });
 })();
 
 browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
-    browser.runtime.openOptionsPage();
+    // nothing to do, the welcome page is shown by install.js
   } else {
     // Migrate old data (only if there is old data and it hasn't been migrated yet)
-    let oldSelectors = await getFromStorage("object", "selectors", null);
-    let existingMatchers = await getFromStorage("string", "matchers", "");
+    let oldSelectors = await storage.get("object", "selectors", null);
+    let existingMatchers = await storage.get("string", "matchers", "");
     if (
       Array.isArray(oldSelectors) &&
       oldSelectors.length > 0 &&
       existingMatchers === ""
     ) {
       let migrated = oldSelectors.map((e) => e.url_regex).join("\n");
-      await setToStorage("matchers", migrated);
+      await storage.set("matchers", migrated);
       await browser.storage.local.remove("selectors");
     }
   }

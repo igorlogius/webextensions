@@ -10,7 +10,8 @@
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/load-background-tabs-on-select",
   "description": "Prevents background tabs from loading until they have been activated",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"],
+    "type": "module"
   },
   "browser_action": {
     "default_area": "navbar"
