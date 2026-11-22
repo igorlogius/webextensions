@@ -1,5 +1,7 @@
 /* global browser */
 
+import * as storage from "./storage.js";
+
 let containerCleanupTimer = null;
 let toolbarAction = "";
 let tcdeldelay = 5000; // ms, configurable via options (stored as seconds)
@@ -14,14 +16,8 @@ async function getFromStorage(type, id, fallback) {
   if (typeof tmp[id] === type) {
     return tmp[id];
   }
-  await setToStorage(id, fallback);
+  await storage.set(id, fallback);
   return fallback;
-}
-
-async function setToStorage(id, value) {
-  let obj = {};
-  obj[id] = value;
-  return browser.storage.local.set(obj);
 }
 
 browser.menus.create({

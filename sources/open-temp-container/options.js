@@ -1,10 +1,6 @@
 /* global browser */
 
-async function setToStorage(id, value) {
-  let obj = {};
-  obj[id] = value;
-  return browser.storage.local.set(obj);
-}
+import * as storage from "./storage.js";
 
 /* input[ radio || checkbox ] */
 ["toolbarAction", "usecolors"].map((id) => {
@@ -29,7 +25,7 @@ async function setToStorage(id, value) {
               .filter((el) => el.checked)
               .map((el) => el.value);
 
-            setToStorage(evt.target.name, vals);
+            storage.set(evt.target.name, vals);
           });
         }
       } else {
@@ -44,7 +40,7 @@ async function setToStorage(id, value) {
           }
 
           el.addEventListener("click", (evt) => {
-            setToStorage(evt.target.name, evt.target.value);
+            storage.set(evt.target.name, evt.target.value);
           });
         }
       }
@@ -69,6 +65,6 @@ async function setToStorage(id, value) {
       val = 5;
     }
     el.value = val;
-    setToStorage("tcdeldelaysec", val);
+    storage.set("tcdeldelaysec", val);
   });
 })();
