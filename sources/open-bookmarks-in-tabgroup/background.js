@@ -14,12 +14,6 @@ async function getSettings() {
   return browser.storage.local.get(DEFAULTS);
 }
 
-browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
-    browser.runtime.openOptionsPage();
-  }
-});
-
 // Colors supported by browser.tabGroups.update()
 const GROUP_COLORS = [
   "blue",

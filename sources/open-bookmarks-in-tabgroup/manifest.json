@@ -10,7 +10,7 @@
   },
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/open-bookmarks-in-tabgroup",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "icons": {
     "256": "icon.png"
