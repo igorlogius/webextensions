@@ -1,32 +1,6 @@
 /*global browser */
 
-function onChange(evt) {
-  const id = evt.target.id;
-  const el = document.getElementById(id);
-
-  let value = el.type === "checkbox" ? el.checked : el.value;
-  let obj = {};
-
-  if (value === "") {
-    return;
-  }
-  if (el.type === "number") {
-    try {
-      value = parseInt(value);
-      if (isNaN(value)) {
-        value = el.min;
-      }
-      if (value < el.min) {
-        value = el.min;
-      }
-    } catch (e) {
-      value = el.min;
-    }
-  }
-
-  obj[id] = value;
-  browser.storage.local.set(obj).catch(console.error);
-}
+import { onChange } from "./form.js";
 
 ["scope", "mode", "listmatchers"].map((id) => {
   browser.storage.local

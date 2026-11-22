@@ -1,18 +1,8 @@
 /* global browser */
 
 (async () => {
+  const storage = await import("./storage.js");
   const url_regex = new RegExp("^https?://");
-
-  async function getFromStorage(type, id, fallback) {
-    let tmp = await browser.storage.local.get(id);
-    return typeof tmp[id] === type ? tmp[id] : fallback;
-  }
-
-  async function setToStorage(id, value) {
-    let obj = {};
-    obj[id] = value;
-    return browser.storage.local.set(obj);
-  }
 
   const log = (level, msg) => {
     level = level.trim().toLowerCase();
@@ -38,7 +28,7 @@
   async function getRegexList() {
     log("debug", "getRegexList");
 
-    let tmp = await getFromStorage("string", "listmatchers", "");
+    let tmp = await storage.get("string", "listmatchers", "");
 
     let l = [];
 
@@ -142,8 +132,8 @@
   async function onStorageChange(/*changes, area*/) {
     log("debug", "onStorageChange");
 
-    mode = await getFromStorage("boolean", "mode", false);
-    scope = await getFromStorage("boolean", "scope", false);
+    mode = await storage.get("boolean", "mode", false);
+    scope = await storage.get("boolean", "scope", false);
 
     regexList = await getRegexList();
 
@@ -160,8 +150,8 @@
   const manifest = browser.runtime.getManifest();
   const extname = manifest.name;
 
-  let mode = await getFromStorage("boolean", "mode", false);
-  let scope = await getFromStorage("boolean", "scope", false); // false:= consider current window
+  let mode = await storage.get("boolean", "mode", false);
+  let scope = await storage.get("boolean", "scope", false); // false:= consider current window
 
   let regexList = await getRegexList();
   let taggedManually = new Set();
