@@ -1,5 +1,9 @@
 /* global browser Tabulator */
 
+import * as storage from "./storage.js";
+import { onChange } from "./form.js";
+import { getTimeStampStr } from "./utils.js";
+
 let table = null;
 let tableData = null;
 
@@ -126,22 +130,6 @@ function dataDifferentFromInital(newTableData) {
     }
   }
   return false;
-}
-
-function getTimeStampStr() {
-  const d = new Date();
-  let ts = "";
-  [
-    d.getFullYear(),
-    d.getMonth() + 1,
-    d.getDate(),
-    d.getHours(),
-    d.getMinutes(),
-    d.getSeconds(),
-  ].forEach((t, i) => {
-    ts = ts + (i !== 3 ? "-" : "_") + (t < 10 ? "0" : "") + t;
-  });
-  return ts.substring(1);
 }
 
 async function getTblData() {
@@ -543,7 +531,6 @@ async function onDOMContentLoaded() {
   /**
    * Register Table Events
    */
-  const storage = await import("./storage.js");
   const checkState = await storage.get("boolean", "checkState", false);
 
   // after adding a row highlight/select it
@@ -606,35 +593,6 @@ async function onDOMContentLoaded() {
   });
   new ResizeObserver(scheduleGutter).observe(textareaEl);
 } // onDOMContentLoaded
-
-function onChange(evt) {
-  let id = evt.target.id;
-  let el = document.getElementById(id);
-
-  let value = el.type === "checkbox" ? el.checked : el.value;
-  let obj = {};
-
-  if (value === "") {
-    return;
-  }
-  if (el.type === "number") {
-    try {
-      value = parseInt(value);
-      if (isNaN(value)) {
-        value = el.min;
-      }
-      if (value < el.min) {
-        value = el.min;
-      }
-    } catch (e) {
-      value = el.min;
-    }
-  }
-
-  obj[id] = value;
-
-  browser.storage.local.set(obj).catch(console.error);
-}
 
 ["checkState"].map((id) => {
   browser.storage.local
