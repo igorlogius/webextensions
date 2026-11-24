@@ -1,15 +1,11 @@
 (async () => {
-  async function getFromStorage(type, id, fallback) {
-    let tmp = await browser.storage.local.get(id);
-    return typeof tmp[id] === type ? tmp[id] : fallback;
-  }
-
+  const storage = await import("./storage.js");
   const fallback_styles = (async () => {
     let tmp = await fetch(browser.runtime.getURL("popup.css"));
     return await tmp.text();
   })();
 
-  const styles = await getFromStorage("string", "styles", fallback_styles);
+  const styles = await storage.get("string", "styles", fallback_styles);
 
   let styleSheet = document.createElement("style");
   styleSheet.innerText = styles;
@@ -143,12 +139,6 @@
           discarded: false,
         },
   );
-
-  async function setToStorage(id, value) {
-    let obj = {};
-    obj[id] = value;
-    return browser.storage.local.set(obj);
-  }
 
   function buildHitList(hits, regexmode, caseSensitive, searchedVal) {
     const ul = document.createElement("ul");
@@ -335,19 +325,19 @@
     let regexmode = document.getElementById("regexmode").checked;
 
     if (last_searchField_value !== searchedVal) {
-      setToStorage("lastsearch", searchedVal);
+      storage.set("lastsearch", searchedVal);
     }
     if (last_maxhits_value !== maxhits) {
-      setToStorage("lastmaxhits", maxhits);
+      storage.set("lastmaxhits", maxhits);
     }
     if (last_caseSensitive_value !== caseSensitive) {
-      setToStorage("lastcaseSensitive", caseSensitive);
+      storage.set("lastcaseSensitive", caseSensitive);
     }
     if (last_accentSensitive_value !== accentSensitive) {
-      setToStorage("lastaccentSensitive", accentSensitive);
+      storage.set("lastaccentSensitive", accentSensitive);
     }
     if (last_regexmode_value !== regexmode) {
-      setToStorage("lastregexmode", regexmode);
+      storage.set("lastregexmode", regexmode);
 
       if (regexmode) {
         document.getElementById("accentSensitive").setAttribute("disabled", "");
@@ -595,26 +585,26 @@
   createTextFieldEventListener();
   createDocumentListener();
 
-  last_searchStr = await getFromStorage("string", "lastsearch", "");
+  last_searchStr = await storage.get("string", "lastsearch", "");
   if (last_searchStr !== "") {
     document.getElementById("searchField").value = last_searchStr;
   }
-  let lastmaxhits = await getFromStorage("integer", "lastmaxhits", 3);
+  let lastmaxhits = await storage.get("integer", "lastmaxhits", 3);
   document.getElementById("maxhits").value = lastmaxhits;
 
-  if (await getFromStorage("boolean", "lastcaseSensitive", false)) {
+  if (await storage.get("boolean", "lastcaseSensitive", false)) {
     document.getElementById("caseSensitive").setAttribute("checked", "");
   } else {
     document.getElementById("caseSensitive").removeAttribute("checked");
   }
 
-  if (await getFromStorage("boolean", "lastaccentSensitive", false)) {
+  if (await storage.get("boolean", "lastaccentSensitive", false)) {
     document.getElementById("accentSensitive").setAttribute("checked", "");
   } else {
     document.getElementById("accentSensitive").removeAttribute("checked");
   }
 
-  if (await getFromStorage("boolean", "lastregexmode", false)) {
+  if (await storage.get("boolean", "lastregexmode", false)) {
     document.getElementById("regexmode").setAttribute("checked", "");
     document.getElementById("accentSensitive").setAttribute("disabled", "");
     document.getElementById("caseSensitive").setAttribute("disabled", "");

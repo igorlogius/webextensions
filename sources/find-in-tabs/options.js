@@ -1,33 +1,6 @@
 /* global browser */
 
-function onChange(evt) {
-  let id = evt.target.id;
-  let el = document.getElementById(id);
-
-  let value = el.type === "checkbox" ? el.checked : el.value;
-  let obj = {};
-
-  if (value === "") {
-    return;
-  }
-  if (el.type === "number") {
-    try {
-      value = parseInt(value);
-      if (isNaN(value)) {
-        value = el.min;
-      }
-      if (value < el.min) {
-        value = el.min;
-      }
-    } catch (e) {
-      value = el.min;
-    }
-  }
-
-  obj[id] = value;
-
-  browser.storage.local.set(obj).catch(console.error);
-}
+import { onChange } from "./form.js";
 
 ["styles"].map((id) => {
   browser.storage.local
