@@ -1,6 +1,7 @@
 /* global browser */
 
-sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+import { recGetFolders } from "./bookmarks.js";
+import { sleep } from "./utils.js";
 
 const DEFAULT_REGEX =
   "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z][a-zA-Z0-9]{0,5}\\b[-a-zA-Z0-9@:%_+\\.~#?&//=]*";
@@ -266,21 +267,6 @@ impcbbtn.addEventListener("click", () => {
 });
 
 // --- Step 2/3: bookmarks permission + folders ---
-
-function recGetFolders(node, depth = 0) {
-  let out = new Map();
-  if (typeof node.url !== "string") {
-    if (node.id !== "root________") {
-      out.set(node.id, { depth: depth, title: node.title });
-    }
-    if (node.children) {
-      for (let child of node.children) {
-        out = new Map([...out, ...recGetFolders(child, depth + 1)]);
-      }
-    }
-  }
-  return out;
-}
 
 async function initFolderSelect() {
   folders.innerHTML = '<option value="">Bookmark folder&hellip;</option>';
