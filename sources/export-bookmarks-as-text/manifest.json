@@ -10,7 +10,7 @@
   },
   "homepage_url": "https://github.com/igorlogius/webextensions/tree/main/sources/export-bookmarks-as-text",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["install.js", "background.js"],
     "persistent": false
   },
   "description": "Export Bookmarks as Text",
