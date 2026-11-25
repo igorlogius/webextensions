@@ -443,9 +443,3 @@ browser.tabs.onRemoved.addListener((tabId) => {
     tempData.delete(tabId);
   }
 });
-
-browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
-    browser.runtime.openOptionsPage();
-  }
-});
