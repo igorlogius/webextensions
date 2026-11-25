@@ -130,6 +130,5 @@ browser.runtime.onInstalled.addListener(async ({ reason }) => {
       mode: typeof stored.mode === "boolean" ? stored.mode : false,
       matchers: typeof stored.matchers === "string" ? stored.matchers : "",
     });
-    browser.runtime.openOptionsPage();
   }
 });
