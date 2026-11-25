@@ -11,7 +11,7 @@
     "266": "icon.png"
   },
   "background": {
-    "scripts": ["feed-parser.js", "background.js"]
+    "scripts": ["install.js", "feed-parser.js", "background.js"]
   },
   "browser_action": {
     "default_area": "navbar",
