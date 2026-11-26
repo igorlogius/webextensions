@@ -2,4 +2,4 @@ This repository contains the sources of a collection of webextensions (aka. brow
 
 Each addon can be "build" by simply zipping the corresponding addon folder inside the `sources` directory.
 
-Most are also auto published to [AMO](addons.mozilla.org) and can be found [here](https://addons.mozilla.org/en-US/firefox/user/13634657/)
+Most are also auto published to [AMO](https://addons.mozilla.org) and can be found [here](https://addons.mozilla.org/en-US/firefox/user/13634657/)
