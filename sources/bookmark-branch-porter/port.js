@@ -1,5 +1,7 @@
 /* global browser */
 
+import { recGetFolders } from "./bookmarks.js";
+
 const $ = (id) => document.getElementById(id);
 
 const exportFolder = $("exportfolder");
@@ -113,21 +115,6 @@ function rec2HtmlStr(bmTreeNode, level = 1) {
       out +
       "</DL>"
     );
-  }
-  return out;
-}
-
-function recGetFolders(node, depth = 0) {
-  let out = new Map();
-  if (typeof node.url !== "string") {
-    if (node.id !== "root________") {
-      out.set(node.id, { depth: depth, title: node.title });
-    }
-    if (node.children) {
-      for (let child of node.children) {
-        out = new Map([...out, ...recGetFolders(child, depth + 1)]);
-      }
-    }
   }
   return out;
 }
