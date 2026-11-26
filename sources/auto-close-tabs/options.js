@@ -1,6 +1,7 @@
 /* global browser */
 
 import * as storage from "./storage.js";
+import { recGetFolders } from "./bookmarks.js";
 
 const saveFolderEl = document.getElementById("saveFolder");
 const closeThresholdEl = document.getElementById("closeThreshold");
@@ -125,21 +126,6 @@ toggleAutostartBtn.addEventListener("click", async () => {
 });
 
 // --- bookmark folder select --------------------------------------------
-
-function recGetFolders(node, depth = 0) {
-  let out = new Map();
-  if (typeof node.url !== "string") {
-    if (node.id !== "root________") {
-      out.set(node.id, { depth: depth, title: node.title });
-    }
-    if (node.children) {
-      for (let child of node.children) {
-        out = new Map([...out, ...recGetFolders(child, depth + 1)]);
-      }
-    }
-  }
-  return out;
-}
 
 async function initSaveFolderSelect() {
   const nodes = await browser.bookmarks.getTree();

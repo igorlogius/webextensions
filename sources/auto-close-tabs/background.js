@@ -371,9 +371,3 @@ browser.alarms.onAlarm.addListener((alarm) => {
     }
   });
 })();
-
-browser.runtime.onInstalled.addListener(async (details) => {
-  if (details.reason === "install") {
-    browser.runtime.openOptionsPage();
-  }
-});
