@@ -66,11 +66,6 @@ browser.browserAction.onClicked.addListener((tab) => {
   openOptionsFor(tab.url);
 });
 
-async function getFromStorage(type, id, fallback) {
-  let tmp = await browser.storage.local.get(id);
-  return typeof tmp[id] === type ? tmp[id] : fallback;
-}
-
 async function onStorageChanged() {
   var res = await browser.storage.local.get("selectors");
   store = res.selectors;

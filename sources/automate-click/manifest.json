@@ -14,7 +14,7 @@
     "default_title": "Automate Click (click to add a rule for this page)"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["install.js", "background.js"]
   },
   "content_scripts": [
     {
